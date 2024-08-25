@@ -1,0 +1,21 @@
+.button-bar {
+    padding: 10px;
+    background-color: #E3F2FD;
+}
+
+.button-bar Button {
+    -fx-background-color: #64B5F6;
+    -fx-text-fill: white;
+}
+
+.button-bar Button:hover {
+    -fx-background-color: #42A5F5;
+}
+
+.table-view {
+    -fx-padding: 10px;
+}
+
+.table-column {
+    -fx-alignment: CENTER-LEFT;
+}

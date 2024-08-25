@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.layout.VBox?>
+
+<BorderPane xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.pharmacy.ui.controllers.SupplierController">
+    <top>
+        <HBox spacing="10">
+                <Button text="Add Supplier" onAction="#handleAddSupplier"/>
+                <Button text="Edit Supplier" onAction="#handleEditSupplier"/>
+                <Button text="Remove Supplier" onAction="#handleRemoveSupplier"/>
+                <TextField fx:id="searchField" promptText="Search Supplier"/>
+                <Button text="Search" onAction="#handleSearchSupplier"/>
+                <Button text="View All" onAction="#handleViewAllSuppliers"/>
+        </HBox>
+    </top>
+    <center>
+        <TableView fx:id="suppliersTable">
+            <columns>
+                <TableColumn fx:id="nameColumn" text="Name"/>
+                <TableColumn fx:id="locationColumn" text="Location"/>
+                <TableColumn fx:id="contactColumn" text="Contact"/>
+            </columns>
+        </TableView>
+    </center>
+</BorderPane>

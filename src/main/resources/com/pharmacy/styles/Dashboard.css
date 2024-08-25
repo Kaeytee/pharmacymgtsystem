@@ -1,0 +1,77 @@
+/* General styling */
+.root {
+    -fx-background-color: #ecf0f1; /* Neutral Grey */
+}
+
+.sidebar {
+    -fx-background-color: #34495e; /* Dark Grey */
+    -fx-padding: 20;
+}
+
+/* Sidebar styles */
+.shop-label {
+    -fx-font-size: 24px;
+    -fx-text-fill: white;
+    -fx-padding-bottom: 20px;
+}
+
+/* Button styles */
+.sidebar-button {
+    -fx-background-color: transparent;
+    -fx-text-fill: white;
+    -fx-font-size: 16px;
+    -fx-pref-width: 200px;
+    -fx-alignment: center-left;
+    -fx-padding: 10 20;
+    -fx-cursor: hand;
+}
+
+.sidebar-button:hover {
+    -fx-background-color: #2ecc71; /* Primary Green */
+}
+
+.main-content {
+    -fx-padding: 20;
+}
+
+.dashboard-title {
+    -fx-font-size: 36px;
+    -fx-text-fill: #3498db; /* Accent Blue */
+    -fx-padding-bottom: 20px;
+}
+
+.dashboard-card {
+    -fx-background-color: #ffffff; /* White */
+    -fx-padding: 20;
+    -fx-border-radius: 10;
+    -fx-background-radius: 10;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.15), 10, 0, 0, 0);
+    -fx-alignment: center;
+}
+
+.card-title {
+    -fx-font-size: 18px;
+    -fx-text-fill: #7f8c8d; /* Light Grey for contrast */
+}
+
+.card-value {
+    -fx-font-size: 36px;
+    -fx-text-fill: #27ae60; /* Light Green */
+}
+
+/* Colors for the cards */
+.dashboard-card:nth-child(1) .card-value {
+    -fx-text-fill: #2ecc71; /* Primary Green */
+}
+
+.dashboard-card:nth-child(2) .card-value {
+    -fx-text-fill: #3498db; /* Accent Blue */
+}
+
+.dashboard-card:nth-child(3) .card-value {
+    -fx-text-fill: #27ae60; /* Light Green */
+}
+
+.dashboard-card:nth-child(4) .card-value {
+    -fx-text-fill: #e74c3c; /* Red for alerts, indicating urgency */
+}

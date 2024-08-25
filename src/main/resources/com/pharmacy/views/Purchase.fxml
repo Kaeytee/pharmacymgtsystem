@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.layout.VBox?>
+
+<BorderPane xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.pharmacy.ui.controllers.PurchaseController">
+    <top>
+        <HBox spacing="10">
+                <Button text="Add Purchase" onAction="#handleAddPurchase"/>
+                <Button text="Edit Purchase" onAction="#handleEditPurchase"/>
+                <Button text="Remove Purchase" onAction="#handleRemovePurchase"/>
+                <TextField fx:id="searchField" promptText="Search Purchase"/>
+                <Button text="Search" onAction="#handleSearchPurchase"/>
+                <Button text="View All" onAction="#handleViewAllPurchases"/>
+        </HBox>
+    </top>
+    <center>
+        <TableView fx:id="purchasesTable">
+            <columns>
+                <TableColumn fx:id="drugColumn" text="Drug"/>
+                <TableColumn fx:id="quantityColumn" text="Quantity"/>
+            </columns>
+        </TableView>
+    </center>
+</BorderPane>

@@ -1,0 +1,82 @@
+/* Set background image */
+.root {
+    -fx-background-image: url("https://images.unsplash.com/photo-1498050108023-c5249f4df085?fit=crop&w=1350&q=80");
+    -fx-background-size: cover;
+    -fx-background-position: center;
+    -fx-padding: 40;
+    -fx-background-color: rgba(255, 255, 255, 0.8);
+    -fx-border-radius: 10;
+    -fx-background-radius: 10;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.5), 10, 0, 0, 0);
+}
+
+/* Title styling */
+.title {
+    -fx-font-size: 36px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #2C3E50;
+    -fx-padding-bottom: 20px;
+    -fx-font-family: "Arial Black";
+}
+
+/* Label styling */
+.label {
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #34495E;
+    -fx-alignment: top-left;
+    -fx-padding-bottom: 5px; /* Add padding below the label */
+}
+
+/* Input field styling */
+.input-field {
+    -fx-pref-width: 300px;
+    -fx-pref-height: 40px;
+    -fx-font-size: 14px;
+    -fx-padding: 10px;
+    -fx-border-color: #34495E;
+    -fx-border-radius: 5px;
+    -fx-background-color: #F7F7F7;
+    -fx-background-radius: 5px;
+}
+
+/* Login button styling */
+.login-button {
+    -fx-background-color: #27AE60;
+    -fx-text-fill: white;
+    -fx-pref-width: 100px;
+    -fx-pref-height: 30px;
+    -fx-font-size: 14px;
+    -fx-border-radius: 5px;
+    -fx-margin-top: 20px;
+    -fx-alignment: center;
+    -fx-cursor: hand;
+}
+
+/* Cancel button styling */
+.cancel-button {
+    -fx-background-color: #E74C3C;
+    -fx-text-fill: white;
+    -fx-pref-width: 100px;
+    -fx-pref-height: 30px;
+    -fx-font-size: 14px;
+    -fx-border-radius: 5px;
+    -fx-margin-top: 20px;
+    -fx-alignment: center;
+    -fx-cursor: hand;
+}
+
+/* Hover effect for login button */
+.login-button:hover {
+    -fx-background-color: #1E8654;
+}
+
+/* Hover effect for cancel button */
+.cancel-button:hover {
+    -fx-background-color: #C0392B;
+}
+
+/* VBox styling */
+.login-container {
+    -fx-alignment: center; /* Center the VBox contents */
+}

@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
+
+<GridPane xmlns:fx="http://javafx.com/fxml" fx:controller="com.pharmacy.ui.controllers.CustomerDialogController">
+    <padding>
+        <Insets top="10" right="10" bottom="10" left="10"/>
+    </padding>
+    <vgap>10</vgap>
+    <hgap>10</hgap>
+
+    <Label text="Customer ID:" GridPane.rowIndex="0" GridPane.columnIndex="0"/>
+    <TextField fx:id="idField" GridPane.rowIndex="0" GridPane.columnIndex="1"/>
+
+    <Label text="Customer Name:" GridPane.rowIndex="1" GridPane.columnIndex="0"/>
+    <TextField fx:id="nameField" GridPane.rowIndex="1" GridPane.columnIndex="1"/>
+
+    <Label text="Contact Info:" GridPane.rowIndex="2" GridPane.columnIndex="0"/>
+    <TextField fx:id="contactInfoField" GridPane.rowIndex="2" GridPane.columnIndex="1"/>
+
+    <HBox spacing="10" alignment="center" GridPane.rowIndex="3" GridPane.columnIndex="1">
+        <Button text="OK" onAction="#handleOk"/>
+        <Button text="Cancel" onAction="#handleCancel"/>
+    </HBox>
+</GridPane>

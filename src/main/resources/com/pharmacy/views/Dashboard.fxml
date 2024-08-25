@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+
+<BorderPane xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.pharmacy.ui.controllers.DashboardController" fx:id="rootLayout">
+    <left>
+        <VBox spacing="10" styleClass="sidebar">
+            <Label text="AD CHEMIST" styleClass="shop-label"/>
+            <Button text="Dashboard" onAction="#handleDashboardButtonAction" styleClass="sidebar-button"/>
+            <Button text="Products" onAction="#handleProductsButtonAction" styleClass="sidebar-button"/>
+            <Button text="Customers" onAction="#handleCustomersButtonAction" styleClass="sidebar-button"/>
+            <Button text="Reports" onAction="#handleReportsButtonAction" styleClass="sidebar-button"/>
+            <Button text="Suppliers" onAction="#handleSuppliersButtonAction" styleClass="sidebar-button"/>
+        </VBox>
+    </left>
+    <center>
+        <VBox spacing="20" styleClass="main-content">
+            <Label text="DASHBOARD" styleClass="dashboard-title"/>
+            <GridPane hgap="20" vgap="20">
+                <VBox styleClass="dashboard-card" GridPane.rowIndex="0" GridPane.columnIndex="0">
+                    <Label text="PRODUCTS" styleClass="card-title"/>
+                    <Label text="300" styleClass="card-value"/>
+                </VBox>
+                <VBox styleClass="dashboard-card" GridPane.rowIndex="0" GridPane.columnIndex="2">
+                    <Label text="CUSTOMERS" styleClass="card-title"/>
+                    <Label text="33" styleClass="card-value"/>
+                </VBox>
+                <VBox styleClass="dashboard-card" GridPane.rowIndex="0" GridPane.columnIndex="3">
+                    <Label text="ALERTS" styleClass="card-title"/>
+                    <Label text="42" styleClass="card-value"/>
+                </VBox>
+            </GridPane>
+            <HBox spacing="20">
+                <!-- Graphs and other elements can be added here -->
+            </HBox>
+        </VBox>
+    </center>
+</BorderPane>
+
+

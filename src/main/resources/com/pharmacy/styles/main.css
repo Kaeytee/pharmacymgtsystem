@@ -1,0 +1,29 @@
+/* Sidebar styles */
+.sidebar {
+    -fx-background-color: #2C3E50;
+    -fx-padding: 10;
+}
+
+.sidebar Button {
+    -fx-background-color: #34495E;
+    -fx-text-fill: white;
+    -fx-pref-width: 150;
+    -fx-pref-height: 40;
+    -fx-font-size: 14px;
+}
+
+/* Login screen styles */
+.login-screen {
+    -fx-background-color: #ECF0F1;
+    -fx-padding: 20;
+    -fx-spacing: 10;
+}
+
+.login-title {
+    -fx-font-size: 16px;
+    -fx-font-weight: bold;
+}
+
+.error-message {
+    -fx-text-fill: red;
+}
