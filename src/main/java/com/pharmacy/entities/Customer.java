@@ -7,7 +7,7 @@ import java.util.UUID;
  */
 public class Customer {
     private String customerName;
-    private final String customerID;
+    private  String customerID;
     private String contactInfo;
 
     /**
@@ -41,6 +41,10 @@ public class Customer {
 
     public String getCustomerID() {
         return customerID;
+    }
+
+    public void setCustomerID(String customerID) {
+        this.customerID = customerID;
     }
 
     public String getContactInfo() {

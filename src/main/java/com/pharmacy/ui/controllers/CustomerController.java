@@ -1,34 +1,33 @@
 package com.pharmacy.ui.controllers;
 
 import com.pharmacy.entities.Customer;
-import com.pharmacy.dao.CustomerDAO;
+import com.pharmacy.functionalities.CustomerManager; // Replace with the actual class name
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Scene;
 import javafx.scene.control.*;
-import javafx.scene.layout.GridPane;
-import javafx.stage.Modality;
-import javafx.stage.Stage;
+import javafx.scene.layout.VBox;
 
-import java.io.IOException;
-import java.sql.Connection;
-import java.sql.SQLException;
 import java.util.Optional;
 
 public class CustomerController {
-    @FXML private TableView<Customer> customersTable;
-    @FXML private TableColumn<Customer, String> idColumn;
-    @FXML private TableColumn<Customer, String> nameColumn;
-    @FXML private TableColumn<Customer, String> contactInfoColumn;
-    @FXML private TextField searchField;
 
-    private CustomerDAO customerDAO;
+    @FXML
+    private TableView<Customer> customersTable;
 
-    public CustomerController(Connection connection) {
-        this.customerDAO = new CustomerDAO(connection);
-    }
+    @FXML
+    private TableColumn<Customer, String> idColumn;
+
+    @FXML
+    private TableColumn<Customer, String> nameColumn;
+
+    @FXML
+    private TableColumn<Customer, String> contactInfoColumn;
+
+    @FXML
+    private TextField searchField;
+
+    private CustomerManager customerManager = new CustomerManager();
 
     @FXML
     public void initialize() {
@@ -36,27 +35,19 @@ public class CustomerController {
         nameColumn.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getCustomerName()));
         contactInfoColumn.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getContactInfo()));
 
-        try {
-            loadAllCustomers();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
+        loadAllCustomers();
     }
 
-    private void loadAllCustomers() throws SQLException {
-        customersTable.setItems(FXCollections.observableArrayList(customerDAO.getAllCustomers()));
+    private void loadAllCustomers() {
+        customersTable.setItems(FXCollections.observableArrayList(customerManager.listAllCustomers()));
     }
 
     @FXML
     private void handleAddCustomer() {
         Optional<Customer> result = showCustomerDialog(null);
         result.ifPresent(customer -> {
-            try {
-                customerDAO.addCustomer(customer);
-                loadAllCustomers();
-            } catch (SQLException e) {
-                showAlert("Error", "Could not add customer: " + e.getMessage());
-            }
+            customerManager.addCustomer(customer);
+            loadAllCustomers();
         });
     }
 
@@ -66,15 +57,11 @@ public class CustomerController {
         if (selectedCustomer != null) {
             Optional<Customer> result = showCustomerDialog(selectedCustomer);
             result.ifPresent(customer -> {
-                try {
-                    customerDAO.updateCustomer(customer);
-                    loadAllCustomers();
-                } catch (SQLException e) {
-                    showAlert("Error", "Could not update customer: " + e.getMessage());
-                }
+                customerManager.updateCustomer(customer);
+                loadAllCustomers();
             });
         } else {
-            showAlert("No Selection", "Please select a customer to edit.");
+            showAlert("No Customer Selected", "Please select a customer to edit.");
         }
     }
 
@@ -82,66 +69,75 @@ public class CustomerController {
     private void handleRemoveCustomer() {
         Customer selectedCustomer = customersTable.getSelectionModel().getSelectedItem();
         if (selectedCustomer != null) {
-            try {
-                customerDAO.deleteCustomer(selectedCustomer.getCustomerID());
-                loadAllCustomers();
-            } catch (SQLException e) {
-                showAlert("Error", "Could not delete customer: " + e.getMessage());
-            }
-        } else {
-            showAlert("No Selection", "Please select a customer to delete.");
-        }
-    }
-
-    @FXML
-    private void handleViewAllCustomers() {
-        try {
+            customerManager.removeCustomer(selectedCustomer);
             loadAllCustomers();
-        } catch (SQLException e) {
-            showAlert("Error", "Could not load all customers: " + e.getMessage());
+        } else {
+            showAlert("No Customer Selected", "Please select a customer to remove.");
         }
     }
 
     @FXML
     private void handleSearchCustomer() {
-        String customerId = searchField.getText();
-        if (customerId == null || customerId.isEmpty()) {
-            showAlert("No Input", "Please enter a customer ID to search.");
-            return;
-        }
-
-        Optional<Customer> result = Optional.ofNullable(customerDAO.getCustomerById(customerId));
-        if (result.isPresent()) {
-            customersTable.setItems(FXCollections.observableArrayList(result.get()));
+        String searchText = searchField.getText();
+        if (searchText != null && !searchText.isEmpty()) {
+            Optional<Customer> customer = customerManager.searchCustomerByID(searchText); // Adjust as needed
+            customer.ifPresent(c -> customersTable.setItems(FXCollections.observableArrayList(c)));
         } else {
-            showAlert("Not Found", "Customer with ID " + customerId + " not found.");
+            loadAllCustomers();
         }
     }
 
+    @FXML
+    private void handleViewAllCustomers() {
+        loadAllCustomers();
+    }
+
     private Optional<Customer> showCustomerDialog(Customer customer) {
-        try {
-            FXMLLoader loader = new FXMLLoader();
-            loader.setLocation(getClass().getResource("/com/pharmacy/ui/CustomerDialog.fxml"));
-            GridPane page = loader.load();
+        Dialog<Customer> dialog = new Dialog<>();
+        dialog.setTitle(customer == null ? "Add Customer" : "Edit Customer");
 
-            Stage dialogStage = new Stage();
-            dialogStage.setTitle("Edit Customer");
-            dialogStage.initModality(Modality.WINDOW_MODAL);
-            dialogStage.initOwner(customersTable.getScene().getWindow());
-            Scene scene = new Scene(page);
-            dialogStage.setScene(scene);
+        ButtonType saveButtonType = new ButtonType("Save", ButtonBar.ButtonData.OK_DONE);
+        dialog.getDialogPane().getButtonTypes().addAll(saveButtonType, ButtonType.CANCEL);
 
-            CustomerDialogController controller = loader.getController();
-            controller.setDialogStage(dialogStage);
-            controller.setCustomer(customer);
+        VBox vbox = new VBox(10);
+        TextField idField = new TextField();
+        TextField nameField = new TextField();
+        TextField contactField = new TextField();
 
-            dialogStage.showAndWait();
-
-            return controller.isOkClicked() ? Optional.of(controller.getCustomer()) : Optional.empty();
-        } catch (IOException e) {
-            e.printStackTrace();
-            return Optional.empty();
+        if (customer != null) {
+            idField.setText(customer.getCustomerID());
+            nameField.setText(customer.getCustomerName());
+            contactField.setText(customer.getContactInfo());
         }
+
+        vbox.getChildren().addAll(new Label("ID:"), idField, new Label("Name:"), nameField, new Label("Contact:"), contactField);
+        dialog.getDialogPane().setContent(vbox);
+
+        dialog.setResultConverter(dialogButton -> {
+            if (dialogButton == saveButtonType) {
+                String id = idField.getText();
+                String name = nameField.getText();
+                String contact = contactField.getText();
+
+                try {
+                    if (customer == null) {
+                        return new Customer(id, name, contact); // Ensure you have an appropriate constructor
+                    } else {
+                        customer.setCustomerID(id);
+                        customer.setCustomerName(name);
+                        customer.setContactInfo(contact);
+                        return customer;
+                    }
+                } catch (IllegalArgumentException e) {
+                    showAlert("Invalid Input", e.getMessage());
+                    return null;
+                }
+            } else {
+                return null;
+            }
+        });
+
+        return dialog.showAndWait();
     }
 
     private void showAlert(String title, String message) {

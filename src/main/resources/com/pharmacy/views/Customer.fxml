@@ -34,7 +34,10 @@
     </center>
 
     <bottom>
-        <HBox spacing="10" alignment="center" padding="10">
+        <HBox spacing="10" alignment="center">
+            <padding>
+                <Insets top="10" right="10" bottom="10" left="10"/>
+            </padding>
             <Button text="Add Customer" onAction="#handleAddCustomer"/>
             <Button text="Edit Customer" onAction="#handleEditCustomer"/>
             <Button text="Remove Customer" onAction="#handleRemoveCustomer"/>

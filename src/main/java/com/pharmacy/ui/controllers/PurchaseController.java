@@ -9,6 +9,7 @@ import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.layout.VBox;
 
+import java.util.Collection;
 import java.util.Map;
 import java.util.Optional;
 
@@ -81,12 +82,22 @@ public class PurchaseController {
         if (searchText != null && !searchText.isEmpty()) {
             Optional<Drug> drug = drugManager.searchDrugByName(searchText);
             if (drug.isPresent()) {
-                purchasesTable.setItems(FXCollections.observableArrayList(purchaseManager.listAllPurchases().entrySet().stream()
-                        .filter(entry -> entry.getKey().equals(drug.get()))
-                        .findFirst().orElse(null)));
+                // Filter purchases based on the found drug
+                purchasesTable.setItems(FXCollections.observableArrayList(
+                        purchaseManager.listAllPurchases().entrySet().stream()
+                                .filter(entry -> entry.getKey().equals(drug.get()))
+                                .toList()
+                ));
+            } else {
+                showAlert("No Drug Found", "No drug found with the given name.");
+                // Optionally clear the table or reload all purchases
+                loadAllPurchases();
             }
+        } else {
+            loadAllPurchases(); // Reload all purchases if search text is empty
         }
     }
+
 
     @FXML
     private void handleViewAllPurchases() {

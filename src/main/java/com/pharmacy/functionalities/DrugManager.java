@@ -3,8 +3,10 @@ package com.pharmacy.functionalities;
 import com.pharmacy.entities.Drug;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 /**
  * Manages drug-related operations.
@@ -50,7 +52,7 @@ public class DrugManager {
      * @param drug the drug to remove
      * @throws IllegalArgumentException if the drug is null
      */
-    public void removeDrug(Drug drug) {
+    public void removeDrug(String drug) {
         if (drug == null) throw new IllegalArgumentException("Drug cannot be null.");
         this.drugs.remove(drug);
     }
@@ -63,11 +65,16 @@ public class DrugManager {
      * @throws IllegalArgumentException if the drug name is null or empty
      */
     public Optional<Drug> searchDrugByName(String drugName) {
-        if (drugName == null || drugName.isEmpty()) throw new IllegalArgumentException("Drug name cannot be null or empty.");
+        if (drugName == null || drugName.isEmpty()) {
+            throw new IllegalArgumentException("Drug name cannot be null or empty.");
+        }
         return drugs.stream()
                 .filter(drug -> drug.getDrugName().equalsIgnoreCase(drugName))
                 .findFirst();
     }
+
+
+
 
     /**
      * Checks if the drug already exists.

@@ -1,7 +1,7 @@
 package com.pharmacy.ui.controllers;
 
 import com.pharmacy.entities.Drug;
-import com.pharmacy.dao.DrugDAO;
+import com.pharmacy.functionalities.DrugManager;
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleStringProperty;
@@ -9,12 +9,7 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
-import javafx.scene.layout.GridPane;
-import javafx.stage.Stage;
-
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.SQLException;
+import javafx.scene.layout.VBox;
 import java.util.Optional;
 
 public class DrugsController {
@@ -40,59 +35,37 @@ public class DrugsController {
     @FXML
     private TextField searchField;
 
-    private DrugDAO drugDAO;
-
+    private DrugManager drugManager = new DrugManager();
     private ObservableList<Drug> drugList = FXCollections.observableArrayList();
-
-    public DrugsController() {
-        // No-argument constructor for FXMLLoader
-    }
 
     @FXML
     public void initialize() {
-        try {
-            initializeDrugDAO();
-        } catch (SQLException e) {
-            showAlert("Error", "Could not initialize DAO: " + e.getMessage());
-        }
-
         idColumn.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getDrugId()));
         nameColumn.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getDrugName()));
         quantityColumn.setCellValueFactory(cellData -> new SimpleIntegerProperty(cellData.getValue().getDrugQuantity()).asObject());
         stockColumn.setCellValueFactory(cellData -> new SimpleIntegerProperty(cellData.getValue().getStockQuantity()).asObject());
         priceColumn.setCellValueFactory(cellData -> new SimpleDoubleProperty(cellData.getValue().getPrice()).asObject());
 
-        try {
-            loadAllDrugs();
-        } catch (SQLException e) {
-            showAlert("Error", "Could not load drugs: " + e.getMessage());
-        }
+        loadAllDrugs();
     }
 
-    private void initializeDrugDAO() throws SQLException {
-        Connection connection = DriverManager.getConnection(
-                "jdbc:postgresql://localhost:5432/ad_pharmacy",
-                "pharmacy_user",
-                "gooses2@"
-        );
-        this.drugDAO = new DrugDAO(connection);
-    }
-
-    private void loadAllDrugs() throws SQLException {
-        drugList.setAll(drugDAO.getAllDrugs());
+    private void loadAllDrugs() {
+        drugList.setAll(drugManager.getAllDrugs());
         drugsTable.setItems(drugList);
+    }
+
+    @FXML
+    private void handleViewAllDrugs() {
+        loadAllDrugs();
+        showAlert("Information", "All drugs have been loaded successfully.");
     }
 
     @FXML
     private void handleAddDrug() {
         Optional<Drug> result = showDrugDialog(null);
         result.ifPresent(drug -> {
-            try {
-                drugDAO.addDrug(drug);
-                loadAllDrugs();
-            } catch (SQLException e) {
-                showAlert("Error", "Could not add drug: " + e.getMessage());
-            }
+            drugManager.addDrug(drug);
+            loadAllDrugs();
         });
     }
 
@@ -102,15 +75,11 @@ public class DrugsController {
         if (selectedDrug != null) {
             Optional<Drug> result = showDrugDialog(selectedDrug);
             result.ifPresent(drug -> {
-                try {
-                    drugDAO.updateDrug(drug);
-                    loadAllDrugs();
-                } catch (SQLException e) {
-                    showAlert("Error", "Could not update drug: " + e.getMessage());
-                }
+                drugManager.updateDrug(drug);
+                loadAllDrugs();
             });
         } else {
-            showAlert("No Selection", "Please select a drug to edit.");
+            showAlert("No Drug Selected", "Please select a drug to edit.");
         }
     }
 
@@ -118,36 +87,85 @@ public class DrugsController {
     private void handleRemoveDrug() {
         Drug selectedDrug = drugsTable.getSelectionModel().getSelectedItem();
         if (selectedDrug != null) {
-            try {
-                drugDAO.deleteDrug(selectedDrug.getDrugId());
-                loadAllDrugs();
-            } catch (SQLException e) {
-                showAlert("Error", "Could not delete drug: " + e.getMessage());
-            }
+            drugManager.removeDrug(selectedDrug.getDrugId());
+            loadAllDrugs();
         } else {
-            showAlert("No Selection", "Please select a drug to delete.");
+            showAlert("No Drug Selected", "Please select a drug to delete.");
         }
     }
 
     @FXML
     private void handleSearchDrugs() {
-        String searchTerm = searchField.getText();
-        try {
-            drugList.setAll(drugDAO.searchDrugsByName(searchTerm));
-            drugsTable.setItems(drugList);
-        } catch (SQLException e) {
-            showAlert("Error", "Could not search drugs: " + e.getMessage());
+        String searchText = searchField.getText();
+        if (searchText != null && !searchText.isEmpty()) {
+            Optional<Drug> drugOpt = drugManager.searchDrugByName(searchText);
+            if (drugOpt.isPresent()) {
+                // If the drug is found, update the table with that drug
+                drugList.setAll(drugOpt.get()); // Use Collections.singletonList for single item
+                drugsTable.setItems(drugList);
+            } else {
+                showAlert("No Drug Found", "No drug found with the given name.");
+                // Optionally clear the table or reload all drugs
+                loadAllDrugs();
+            }
+        } else {
+            loadAllDrugs(); // Reload all drugs if search text is empty
         }
     }
 
+
+
+
     private Optional<Drug> showDrugDialog(Drug drug) {
-        // Implementation for showing a dialog to add/edit drug
-        // Example: return Optional.of(new Drug(...)); if the user submits the form
-        return Optional.empty();
+        Dialog<Drug> dialog = new Dialog<>();
+        dialog.setTitle(drug == null ? "Add Drug" : "Edit Drug");
+
+        ButtonType saveButtonType = new ButtonType("Save", ButtonBar.ButtonData.OK_DONE);
+        dialog.getDialogPane().getButtonTypes().addAll(saveButtonType, ButtonType.CANCEL);
+
+        VBox vbox = new VBox(10);
+        TextField idField = new TextField();
+        TextField nameField = new TextField();
+        TextField quantityField = new TextField();
+        TextField stockField = new TextField();
+        TextField priceField = new TextField();
+
+        if (drug != null) {
+            idField.setText(drug.getDrugId());
+            nameField.setText(drug.getDrugName());
+            quantityField.setText(Integer.toString(drug.getDrugQuantity()));
+            stockField.setText(Integer.toString(drug.getStockQuantity()));
+            priceField.setText(Double.toString(drug.getPrice()));
+        }
+
+        vbox.getChildren().addAll(
+                new Label("ID:"), idField,
+                new Label("Name:"), nameField,
+                new Label("Quantity:"), quantityField,
+                new Label("Stock:"), stockField,
+                new Label("Price:"), priceField
+        );
+
+        dialog.getDialogPane().setContent(vbox);
+
+        dialog.setResultConverter(dialogButton -> {
+            if (dialogButton == saveButtonType) {
+                String id = idField.getText();
+                String name = nameField.getText();
+                int quantity = Integer.parseInt(quantityField.getText());
+                int stock = Integer.parseInt(stockField.getText());
+                double price = Double.parseDouble(priceField.getText());
+
+                return new Drug(id, name, quantity, stock, price);
+            }
+            return null;
+        });
+
+        return dialog.showAndWait();
     }
 
     private void showAlert(String title, String message) {
-        Alert alert = new Alert(Alert.AlertType.ERROR);
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
         alert.setTitle(title);
         alert.setHeaderText(null);
         alert.setContentText(message);
