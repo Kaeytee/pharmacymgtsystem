@@ -1,9 +1,11 @@
 package com.pharmacy.ui;
 
+import com.pharmacy.ui.controllers.LoginController;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
+import com.pharmacy.utils.DatabaseUtils;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -19,14 +21,13 @@ public class MainApp extends Application {
         this.primaryStage = primaryStage;
         try {
             initDatabaseConnection();
-            showDashboard();
+            initLogin(); // Show login page first
         } catch (SQLException e) {
             e.printStackTrace();
         }
     }
 
     private void initDatabaseConnection() throws SQLException {
-        // Replace with your database connection details
         String url = "jdbc:postgresql://localhost:5432/ad_pharmacy";
         String user = "pharmacy_user";
         String password = "gooses2@";
@@ -42,6 +43,8 @@ public class MainApp extends Application {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/pharmacy/views/LoginLayout.fxml"));
             Scene scene = new Scene(loader.load(), 1000, 800);
             scene.getStylesheets().add(getClass().getResource("/com/pharmacy/styles/login.css").toExternalForm());
+            LoginController controller = loader.getController();
+            controller.setMainApp(this);
             primaryStage.setScene(scene);
             primaryStage.setTitle("AD Chemist - Login");
             primaryStage.show();

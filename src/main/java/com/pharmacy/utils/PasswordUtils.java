@@ -47,8 +47,8 @@ public class PasswordUtils {
 
         byte[] salt = new byte[SALT_LENGTH];
         byte[] hash = new byte[HASH_LENGTH];
-        System.arraycopy(hashWithSalt, 0, salt, 0, salt.length);
-        System.arraycopy(hashWithSalt, salt.length, hash, 0, hash.length);
+        System.arraycopy(hashWithSalt, 0, salt, 0, SALT_LENGTH);
+        System.arraycopy(hashWithSalt, SALT_LENGTH, hash, 0, HASH_LENGTH);
 
         Argon2Parameters.Builder builder = new Argon2Parameters.Builder(Argon2Parameters.ARGON2_id)
                 .withSalt(salt)
@@ -62,6 +62,7 @@ public class PasswordUtils {
         byte[] calculatedHash = new byte[HASH_LENGTH];
         generator.generateBytes(plainTextPassword.getBytes(StandardCharsets.UTF_8), calculatedHash);
 
+        // Compare the hashes
         for (int i = 0; i < calculatedHash.length; i++) {
             if (calculatedHash[i] != hash[i]) {
                 return false;

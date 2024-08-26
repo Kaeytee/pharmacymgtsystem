@@ -1,14 +1,11 @@
 package com.pharmacy.ui.controllers;
 
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import com.pharmacy.functionalities.LoginService;
 import com.pharmacy.ui.MainApp;
-import javafx.stage.Stage;
 
 public class LoginController {
 
@@ -18,10 +15,11 @@ public class LoginController {
     @FXML
     private PasswordField passwordField;
 
-    private LoginService loginService;
+    private LoginService loginService = new LoginService();
+    private MainApp mainApp;
 
-    public LoginController() {
-        this.loginService = new LoginService();
+    public void setMainApp(MainApp mainApp) {
+        this.mainApp = mainApp;
     }
 
     @FXML
@@ -36,7 +34,7 @@ public class LoginController {
 
         boolean loginSuccess = loginService.loginUser(username, password);
         if (loginSuccess) {
-            navigateToMainScreen();
+            mainApp.showDashboard();
         } else {
             showAlert("Login failed", "Incorrect username or password.");
         }
@@ -53,15 +51,5 @@ public class LoginController {
         alert.setTitle(title);
         alert.setContentText(content);
         alert.showAndWait();
-    }
-
-    private void navigateToMainScreen() {
-        try {
-            MainApp mainApp = new MainApp();
-            mainApp.showDashboard();
-        } catch (Exception e) {
-            e.printStackTrace();
-            showAlert("Error", "Failed to load dashboard screen.");
-        }
     }
 }
